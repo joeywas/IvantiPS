@@ -5,7 +5,7 @@ on:
 
     workflow_dispatch: # Enables the possibility to trigger the workflow manually
 
-Jobs:
+jobs:
     # first job builds the module
     build:
         runs-on: ubuntu-latest
