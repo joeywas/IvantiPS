@@ -190,12 +190,12 @@ task Build -if($Configuration -eq "Release"){
         Write-Verbose -Message "No new ModuleVersion was provided, locating existing version from psd file."
         $oldModuleVersion = (Test-ModuleManifest -Path ".\IvantiPS\$($ModuleName).psd1").Version
 
-        $publicFunctions = Get-ChildItem -Path ".\IvantiPS\Public\*.ps1"
-        $privateFunctions = Get-ChildItem -Path ".\IvantiPS\Private\*.ps1"
-        $totalFunctions = $publicFunctions.count + $privateFunctions.count
+        #$publicFunctions = Get-ChildItem -Path ".\IvantiPS\Public\*.ps1"
+        #$privateFunctions = Get-ChildItem -Path ".\IvantiPS\Private\*.ps1"
+        #$totalFunctions = $publicFunctions.count + $privateFunctions.count
         $ModuleBuildNumber = $oldModuleVersion.Build + 1
         Write-Verbose -Message "Updating the Moduleversion"
-        $Script:ModuleVersion = "$($oldModuleVersion.Major).$($totalFunctions).$($ModuleBuildNumber)"
+        $Script:ModuleVersion = "$($oldModuleVersion.Major).$($oldModuleVersion.Minor).$($ModuleBuildNumber)"
         Write-Verbose "Mew ModuleVersion: $ModuleVersion"
         Update-ModuleManifest -Path ".\IvantiPS\$($ModuleName).psd1" -ModuleVersion $ModuleVersion
     }
@@ -256,7 +256,9 @@ task Build -if($Configuration -eq "Release"){
                 $mylist = $Sel.ToString().Split([Environment]::NewLine)
                 foreach($s in $mylist){
                     if($s -match "Alias"){
-                        $alias = (($s.split(":")[2]).split("(")[1]).split(")")[0]
+                        # This assumes aliases are defined like so
+                        # [Alias('Get-IvantiAsset')]
+                        $alias = (($s.split(":")[3]).split("('")[1]).split("')")[0]
                         Write-Verbose -Message "Exporting Alias: $($alias) to Function: $($function)"
                         Add-Content -Path $ModuleFile -Value "Export-ModuleMember -Function $(($function.split('.')[0]).ToString()) -Alias $alias"
                         $AliasSwitch = $true
