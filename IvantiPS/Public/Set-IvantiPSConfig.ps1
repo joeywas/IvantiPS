@@ -24,7 +24,7 @@ function Set-IvantiPSConfig {
 
 #>
     [CmdletBinding()]
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', 
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '',
         Justification='This function is trivial enough that we do not need ShouldProcess')]
     Param (
         [parameter(Mandatory)]
