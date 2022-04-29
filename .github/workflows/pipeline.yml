@@ -1,1 +1,23 @@
 name: Build Module
+on:
+    pull_request: # Only trigger the workflow if there is a pull request to the main branch
+        branches: [ main ]
+
+    workflow_dispatch: # Enables the possibility to trigger the workflow manually
+
+Jobs:
+    # first job builds the module
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@main
+            - name: Install and cache PowerShell modules
+              id: psmodulecache
+              uses: potatoqualitee/psmodulecache@v4.5
+              with:
+                modules-to-cache: Pester, PSSCriptAnalyzer, InvokeBuild, platyPS
+
+            - name: Show that the Action works
+              shell: pwsh
+              run: |
+                  Get-Module -Name PSFramework, PoshRSJob, dbatools -ListAvailable | Select Path
