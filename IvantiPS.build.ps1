@@ -310,14 +310,15 @@ task Build -if($Configuration -eq "Release"){
         Update-ModuleManifest -Path ".\Output\$($ModuleName)\$($ModuleVersion)\$($ModuleName).psd1" -RootModule "$($ModuleName).psm1"
     }
     catch {
-        Write-Warning -Message "Failed appinding the rootmodule to the Module Manifest"
+        Write-Warning -Message "Failed appending the rootmodule to the Module Manifest"
     }
 
     Write-Verbose -Message "Compiling Help files"
     Write-Verbose -Message "Importing the module to be able to output documentation"
     Try {
         Write-Verbose -Message "Importing the module to be able to output documentation"
-        Import-Module ".\Output\$($ModuleName)\$ModuleVersion\$($ModuleName).psm1"
+        Import-Module -Name ".\Output\$($ModuleName)\$ModuleVersion\$($ModuleName).psm1" -Global
+        Get-Module -Name $($ModuleName) -Verbose
     }
     catch {
         throw "Failed importing the module: $($ModuleName)"
@@ -327,9 +328,9 @@ task Build -if($Configuration -eq "Release"){
         Write-Verbose -Message "Docs folder is empty, generating new files"
         if(Get-Module -Name $($ModuleName)) {
             Write-Verbose -Message "Module: $($ModuleName) is imported into session, generating Help Files"
-            New-MarkdownHelp -Module $ModuleName -OutputFolder ".\Docs"
-            New-MarkdownAboutHelp -OutputFolder ".\Docs" -AboutName $ModuleName
-            New-ExternalHelp ".\Docs" -OutputPath ".\Output\$($ModuleName)\$($ModuleVersion)\en-US\"
+            #New-MarkdownHelp -Module $ModuleName -OutputFolder ".\Docs"
+            #New-MarkdownAboutHelp -OutputFolder ".\Docs" -AboutName $ModuleName
+            #New-ExternalHelp ".\Docs" -OutputPath ".\Output\$($ModuleName)\$($ModuleVersion)\en-US\"
         }
         else {
             throw "Module is not imported, cannot generate help files"
@@ -340,8 +341,11 @@ task Build -if($Configuration -eq "Release"){
         Remove-Item -Path ".\Docs\*.*" -Exclude "about_*"
         if(Get-Module -Name $($ModuleName)) {
             Write-Verbose -Message "Module: $($ModuleName) is imported into session, generating Help Files"
-            New-MarkdownHelp -Module $ModuleName -OutputFolder ".\Docs"
-            New-ExternalHelp ".\Docs" -OutputPath ".\Output\$($ModuleName)\$($ModuleVersion)\en-US\"
+            #New-MarkdownHelp -Module $ModuleName -OutputFolder ".\Docs"
+            # Only generate external help if the output path doesn't exist
+            if (!(Test-Path ".\Output\$($ModuleName)\$($ModuleVersion)\en-US\")) {
+                #New-ExternalHelp ".\Docs" -OutputPath ".\Output\$($ModuleName)\$($ModuleVersion)\en-US\"
+            }
         }
     }
 }
@@ -372,4 +376,4 @@ task Publish -if($Configuration -eq "Release"){
     }
 }
 
-task . Init, Test, DebugBuild, Build, Clean, Publish
+task . Init, FixTrailingWhitespaces, Test, DebugBuild, Build, Clean, Publish
