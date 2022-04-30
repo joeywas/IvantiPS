@@ -8,7 +8,7 @@ on:
 jobs:
     # first job builds the module
     build:
-        runs-on: windows-2019
+        runs-on: windows-latest
         steps:
             - uses: actions/checkout@main
             - name: Install and cache PowerShell modules
