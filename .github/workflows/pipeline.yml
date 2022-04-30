@@ -20,15 +20,15 @@ jobs:
             - name: Invoke Build
               shell: pwsh
               run: pwsh -Command "Invoke-Build -file ./IvantiPS.build.ps1 -Configuration 'Release' -ExportAlias"
-            
-            - name: Push changes to Git Repository
-              run: |
-                git config --global user.name 'Joseph'
-                git config --global user.email 'joey.was@gmail.com'
-                git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
-                git add .
-                git commit -am "Pushing Artifacts"
-                git push
+
+            #- name: Push changes to Git Repository
+            #  run: |
+            #    git config --global user.name 'Joseph'
+            #    git config --global user.email 'joey.was@gmail.com'
+            #    git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+            #    git add .
+            #    git commit -am "Pushing Artifacts"
+            #    git push
             
             - name: Upload Build Artifact
               uses: actions/upload-artifact@v3
