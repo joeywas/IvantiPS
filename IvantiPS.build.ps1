@@ -201,8 +201,8 @@ task Build -if($Configuration -eq "Release"){
         Write-Verbose -Message "No new ModuleVersion was provided, locating existing version from psd file."
         $oldModuleVersion = (Test-ModuleManifest -Path ".\IvantiPS\$($ModuleName).psd1").Version
 
-        #$publicFunctions = Get-ChildItem -Path ".\IvantiPS\Public\*.ps1"
-        #$privateFunctions = Get-ChildItem -Path ".\IvantiPS\Private\*.ps1"
+        $publicFunctions = Get-ChildItem -Path ".\IvantiPS\Public\*.ps1"
+        $privateFunctions = Get-ChildItem -Path ".\IvantiPS\Private\*.ps1"
         #$totalFunctions = $publicFunctions.count + $privateFunctions.count
         $ModuleBuildNumber = $oldModuleVersion.Build + 1
         Write-Verbose -Message "Updating the Moduleversion"
