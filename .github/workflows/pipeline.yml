@@ -8,7 +8,7 @@ on:
 jobs:
     # first job builds the module
     build:
-        runs-on: ubuntu-latest
+        runs-on: windows-2019
         steps:
             - uses: actions/checkout@main
             - name: Install and cache PowerShell modules
@@ -29,7 +29,7 @@ jobs:
 
             - name: Invoke Build
               shell: pwsh
-              run: pwsh -Command "Invoke-Build -file ./IvantiPS.build.ps1 -Configuration 'Release' -ExportAlias"
+              run: pwsh -Command "Invoke-Build -file .\IvantiPS.build.ps1 -Configuration 'Release' -ExportAlias"
 
             #- name: Push changes to Git Repository
             #  run: |
@@ -43,7 +43,7 @@ jobs:
             - name: Sign PowerShell scripts
               shell: pwsh
               run: |
-                $scripts = Get-ChildItem -Path ./Output/ -Filter "*.psm1" -Recurse -ErrorAction Stop
+                $scripts = Get-ChildItem -Path .\Output\ -Filter "*.psm1" -Recurse -ErrorAction Stop
                 $codeSigningCert = Get-ChildItem Cert:\CurrentUser\My -CodeSigningCert | Select-Object -First 1
                 foreach ($script in $scripts) {
                   try {
@@ -58,4 +58,4 @@ jobs:
               uses: actions/upload-artifact@v3
               with:
                 name: IvantiPS # naming the powershell module artifact
-                path: ./Output/ # saving the powershell module artifact to the path .Output/
+                path: .\Output\ # saving the powershell module artifact to the path .Output/
