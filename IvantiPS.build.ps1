@@ -49,7 +49,17 @@ task Test {
     }
 
     Write-Verbose -Message "Running Pester Tests"
-    $Results = Invoke-Pester -Script ".\Tests\*.ps1" -OutputFormat NUnitXml -OutputFile ".\Tests\TestResults.xml"
+    $pesterConfig = @{
+        Run = @{
+            Path = ".\Tests*"
+        }
+        TestResult = @{
+            OutputPath = '.\Tests\TestResults.xml'
+            OutputFormat = 'NUnitXML'
+        }
+    }
+    $Results = Invoke-Pester -Configuration $pesterConfig
+    #$Results = Invoke-Pester -Script ".\Tests*" -OutputFile ".\Tests\TestResults.xml" -OutputFormat NUnitXml
     if($Results.FailedCount -gt 0){
         throw "$($Results.FailedCount) Tests failed"
     }
