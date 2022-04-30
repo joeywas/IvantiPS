@@ -1,9 +1,10 @@
 ###############################################################################
 # IvantiPS.build.ps1
 ###############################################################################
-
-# Source 
-# https://github.com/ScriptingChris/New-ModuleProject/blob/main/Source/build.ps1
+<#
+ Build file source https://github.com/ScriptingChris/New-ModuleProject/blob/main/Source/build.ps1
+ Code Sign Cert https://www.meziantou.net/generate-a-self-signed-certificate-for-code-signing.htm 
+#>
 
 param (
     [ValidateSet("Release", "debug")]$Configuration = "debug",
