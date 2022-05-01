@@ -61,7 +61,7 @@ jobs:
                 path: .\Output\ # saving the powershell module artifact to the path .Output/
 
     publish-to-gallery:
-      needs: build
+        needs: build
         runs-on: ubuntu-latest
           steps:
           - uses: actions/checkout@v3
