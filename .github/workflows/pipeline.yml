@@ -76,10 +76,8 @@ jobs:
             NUGET_KEY: ${{ secrets.NUGET_KEY }}
           shell: pwsh
           run: |
-            $splatParms = @{
-              File = ./IvantiPS.build.ps1
-              Configuration = 'Release'
-              ExportAlias = $true
-              $NugetAPIKey = "$NUGET_KEY"
-            } 
-            Invoke-Build Publish @splatParms
+            $Tags = @('PSEdition_Desktop','PSEdition_Core','Windows','Linux')
+            $NugetAPIKey = ${{ secrets.NUGET_KEY }}
+            $psdFileName = (Get-ChildItem Artifact/*.psm1 -Recurse).FullName
+            Import-Module $psdFileName
+            Publish-Module -Name 'IvantiPS' -NuGetApiKey $NugetAPIKey -Tags $Tags
