@@ -72,12 +72,16 @@ jobs:
             name: IvantiPS
             path: Artifact/
         - name: Publish to gallery
+          shell: pwsh
           env:
             NUGET_KEY: ${{ secrets.NUGET_KEY }}
-          shell: pwsh
           run: |
             $Tags = @('PSEdition_Desktop','PSEdition_Core','Windows','Linux')
-            $NugetAPIKey = ${{ secrets.NUGET_KEY }}
-            $psdFileName = (Get-ChildItem Artifact/*.psm1 -Recurse).FullName
-            Import-Module $psdFileName
-            Publish-Module -Name 'IvantiPS' -NuGetApiKey $NugetAPIKey -Tags $Tags
+            $psmFileName = (Get-ChildItem Artifact/*.psm1 -Recurse).FullName
+            Import-Module $psmFileName -Verbose -Force
+            $ModuleFolder = Split-Path (Get-ChildItem Artifact/*.psd1 -Recurse)
+            if (Get-Module -Name 'IvantiPS') {
+              Publish-Module -Path $ModuleFolder -NuGetApiKey "$env:NUGET_KEY" -Tags $Tags -Whatif
+            } else {
+              Write-Host "Unable to get module 'IvantiPS'"
+            }
