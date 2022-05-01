@@ -201,8 +201,8 @@ task Build -if($Configuration -eq "Release"){
         Write-Verbose -Message "No new ModuleVersion was provided, locating existing version from psd file."
         $oldModuleVersion = (Test-ModuleManifest -Path ".\IvantiPS\$($ModuleName).psd1").Version
 
-        #$publicFunctions = Get-ChildItem -Path ".\IvantiPS\Public\*.ps1"
-        #$privateFunctions = Get-ChildItem -Path ".\IvantiPS\Private\*.ps1"
+        $publicFunctions = Get-ChildItem -Path ".\IvantiPS\Public\*.ps1"
+        $privateFunctions = Get-ChildItem -Path ".\IvantiPS\Private\*.ps1"
         #$totalFunctions = $publicFunctions.count + $privateFunctions.count
         $ModuleBuildNumber = $oldModuleVersion.Build + 1
         Write-Verbose -Message "Updating the Moduleversion"
@@ -342,10 +342,10 @@ task Build -if($Configuration -eq "Release"){
         Remove-Item -Path ".\Docs\*.*" -Exclude "about_*"
         if(Get-Module -Name $($ModuleName)) {
             Write-Verbose -Message "Module: $($ModuleName) is imported into session, generating Help Files"
-            #New-MarkdownHelp -Module $ModuleName -OutputFolder ".\Docs"
+            New-MarkdownHelp -Module $ModuleName -OutputFolder ".\Docs"
             # Only generate external help if the output path doesn't exist
             if (!(Test-Path ".\Output\$($ModuleName)\$($ModuleVersion)\en-US\")) {
-                #New-ExternalHelp ".\Docs" -OutputPath ".\Output\$($ModuleName)\$($ModuleVersion)\en-US\"
+                New-ExternalHelp ".\Docs" -OutputPath ".\Output\$($ModuleName)\$($ModuleVersion)\en-US\"
             }
         }
     }
@@ -365,8 +365,9 @@ task Publish -if($Configuration -eq "Release"){
     Import-Module ".\Output\$($ModuleName)\$ModuleVersion\$($ModuleName).psm1"
     If((Get-Module -Name $ModuleName) -and ($NugetAPIKey)) {
         try {
-            write-Verbose -Message "Publishing Module: $($ModuleName)"
-            Publish-Module -Name $ModuleName -NuGetApiKey $NugetAPIKey
+            $Tags = @('PSEdition_Desktop','PSEdition_Core','Windows','Linux')
+            write-Verbose -Message "Publishing Module: $($ModuleName) with tags $($Tags | Out-String)"
+            Publish-Module -Name $ModuleName -NuGetApiKey $NugetAPIKey -Tags $Tags
         }
         catch {
             throw "Failed publishing module to PowerShell Gallery"
@@ -377,4 +378,4 @@ task Publish -if($Configuration -eq "Release"){
     }
 }
 
-task . Init, FixTrailingWhitespaces, Test, DebugBuild, Build, Clean, Publish
+task . Init, FixTrailingWhitespaces, Test, DebugBuild, Build, Clean
