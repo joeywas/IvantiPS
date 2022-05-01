@@ -61,26 +61,25 @@ jobs:
                 path: .\Output\ # saving the powershell module artifact to the path .Output/
 
     publish-to-gallery:
-      needs: build
+        needs: build
         runs-on: ubuntu-latest
-          steps:
-          - uses: actions/checkout@v3
-          - name: Download build artifact
-              uses: aochmann/actions-download-artifact@1.0.4
-              with:
-                repo: ${{github.repository}}
-              name: IvantiPS
-              path: Artifact/
-          - name: Publish to gallery
-            env:
-              NUGET_KEY: ${{ secrets.NUGET_KEY }}
-            shell: pwsh
-            run: |
+        steps:
+        - uses: actions/checkout@v3
+        - name: Download build artifact
+          uses: aochmann/actions-download-artifact@1.0.4
+          with:
+            repo: ${{github.repository}}
+            name: IvantiPS
+            path: Artifact/
+        - name: Publish to gallery
+          env:
+            NUGET_KEY: ${{ secrets.NUGET_KEY }}
+          shell: pwsh
+          run: |
             $splatParms = @{
               File = ./IvantiPS.build.ps1
-              Task = 'Publish'
               Configuration = 'Release'
               ExportAlias = $true
               $NugetAPIKey = ${{ secrets.NUGET_KEY }}
             } 
-            Invoke-Build @splatParms
+            Invoke-Build Publish @splatParms
