@@ -72,11 +72,11 @@ jobs:
             name: IvantiPS
             path: Artifact/
         - name: Publish to gallery
+          shell: pwsh
           env:
             NUGET_KEY: ${{ secrets.NUGET_KEY }}
-          shell: pwsh
           run: |
             $Tags = @('PSEdition_Desktop','PSEdition_Core','Windows','Linux')
             $psdFileName = (Get-ChildItem Artifact/*.psm1 -Recurse).FullName
             Import-Module $psdFileName
-            Publish-Module -Name 'IvantiPS' -NuGetApiKey $NUGET_KEY -Tags $Tags
+            Publish-Module -Name 'IvantiPS' -NuGetApiKey "$env:NUGET_KEY" -Tags $Tags
