@@ -80,6 +80,6 @@ jobs:
               File = ./IvantiPS.build.ps1
               Configuration = 'Release'
               ExportAlias = $true
-              $NugetAPIKey = ${{ secrets.NUGET_KEY }}
+              $NugetAPIKey = "$NUGET_KEY"
             } 
             Invoke-Build Publish @splatParms
