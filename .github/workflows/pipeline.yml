@@ -69,8 +69,8 @@ jobs:
           uses: aochmann/actions-download-artifact@1.0.4
           with:
             repo: ${{github.repository}}
-          name: IvantiPS
-          path: Artifact/
+            name: IvantiPS
+            path: Artifact/
         - name: Publish to gallery
           env:
             NUGET_KEY: ${{ secrets.NUGET_KEY }}
