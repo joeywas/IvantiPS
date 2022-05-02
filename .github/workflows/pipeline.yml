@@ -76,12 +76,11 @@ jobs:
           env:
             NUGET_KEY: ${{ secrets.NUGET_KEY }}
           run: |
-            $Tags = @('PSEdition_Desktop','PSEdition_Core','Windows','Linux')
             $psmFileName = (Get-ChildItem Artifact/*.psm1 -Recurse).FullName
             Import-Module $psmFileName -Verbose -Force
             $ModuleFolder = Split-Path (Get-ChildItem Artifact/*.psd1 -Recurse)
             if (Get-Module -Name 'IvantiPS') {
-              Publish-Module -Path $ModuleFolder -NuGetApiKey "$env:NUGET_KEY" -Tags $Tags -Whatif
+              Publish-Module -Path $ModuleFolder -NuGetApiKey "$env:NUGET_KEY"
             } else {
               Write-Host "Unable to get module 'IvantiPS'"
             }
