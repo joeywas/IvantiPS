@@ -81,7 +81,7 @@ jobs:
             Import-Module $psmFileName -Verbose -Force
             $ModuleFolder = Split-Path (Get-ChildItem Artifact/*.psd1 -Recurse)
             if (Get-Module -Name 'IvantiPS') {
-              Publish-Module -Path $ModuleFolder -NuGetApiKey "$env:NUGET_KEY" -Tags $Tags -Whatif
+              Publish-Module -Path $ModuleFolder -NuGetApiKey "$env:NUGET_KEY" -Tags $Tags
             } else {
               Write-Host "Unable to get module 'IvantiPS'"
             }
