@@ -98,7 +98,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = 'powershell','ivanti','ivantips','ism','rest','api'
+        Tags = 'powershell','ivanti','api','PSEdition_Desktop','PSEdition_Core','Windows','Linux'
 
         # A URL to the license for this module.
         LicenseUri = 'https://github.com/joeywas/IvantiPS/blob/main/LICENSE'
