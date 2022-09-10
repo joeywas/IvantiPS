@@ -4,7 +4,7 @@
     RootModule = 'IvantiPS.psm1'
 
     # Version number of this module.
-    ModuleVersion = '0.0.2'
+    ModuleVersion = '0.1.3'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -62,13 +62,14 @@
         'Get-IvantiPSConfig',
         'Set-IvantiPSConfig',
         'Connect-IvantiTenant',
-        'Get-IvantiSession',
-        'Invoke-IvantiMethod',
-        'Get-IvantiBusinessObjectMetadata',
-        'Get-IvantiBusinessObject',
         'Get-IvantiAgency',
+        'Get-IvantiBusinessObject',
+        'Get-IvantiBusinessObjectMetadata',
+        'Get-IvantiBusinessObjectRelationship',
         'Get-IvantiCI',
-        'Get-IvantiEmployee'
+        'Get-IvantiEmployee',
+        'Get-IvantiSession',
+        'Invoke-IvantiMethod'
     )
 
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
@@ -100,12 +101,7 @@
             # Tags applied to this module. These help with module discovery in online galleries.
             Tags = @(
                 'powershell',
-                'ivanti',
-                'ivanti service manager',
-                'ivantips',
-                'ism',
-                'rest',
-                'api'
+                'ivanti'
                 )
 
             # A URL to the license for this module.
