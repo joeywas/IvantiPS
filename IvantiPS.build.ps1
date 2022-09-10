@@ -45,11 +45,26 @@ task Test {
         Invoke-ScriptAnalyzer ".\IvantiPS\Private" -Recurse
     }
     catch {
+        Write-Warning "Couldn't run Script Analyzer"
+        $_
         throw "Couldn't run Script Analyzer"
     }
 
     Write-Verbose -Message "Running Pester Tests"
-    $Results = Invoke-Pester -Script ".\Tests\*.ps1" -OutputFormat NUnitXml -OutputFile ".\Tests\TestResults.xml"
+    $pesterConfig = @{
+        Run = @{
+            Path = ".\Tests*"
+        }
+        TestResult = @{
+            OutputPath = '.\Tests\TestResults.xml'
+            OutputFormat = 'NUnitXML'
+        }
+    }
+
+    $PathToPSM1 = ".\IvantiPS\IvantiPS.psm1"
+    Import-Module $PathToPsm1 -Force
+
+    $Results = Invoke-Pester -Configuration $pesterConfig
     if($Results.FailedCount -gt 0){
         throw "$($Results.FailedCount) Tests failed"
     }
@@ -192,12 +207,13 @@ task Build -if($Configuration -eq "Release"){
 
         $publicFunctions = Get-ChildItem -Path ".\IvantiPS\Public\*.ps1"
         $privateFunctions = Get-ChildItem -Path ".\IvantiPS\Private\*.ps1"
-        $totalFunctions = $publicFunctions.count + $privateFunctions.count
-        $ModuleBuildNumber = $oldModuleVersion.Build + 1
+        #$totalFunctions = $publicFunctions.count + $privateFunctions.count
+        #$ModuleBuildNumber = $oldModuleVersion.Build + 1
+        $ModuleBuildNumber = $oldModuleVersion.Build
         Write-Verbose -Message "Updating the Moduleversion"
         $Script:ModuleVersion = "$($oldModuleVersion.Major).$($totalFunctions).$($ModuleBuildNumber)"
         Write-Verbose "Mew ModuleVersion: $ModuleVersion"
-        Update-ModuleManifest -Path ".\IvantiPS\$($ModuleName).psd1" -ModuleVersion $ModuleVersion
+        #Update-ModuleManifest -Path ".\IvantiPS\$($ModuleName).psd1" -ModuleVersion $ModuleVersion
     }
 
     if(Test-Path ".\Output\$($ModuleName)\$($ModuleVersion)"){
@@ -211,7 +227,6 @@ task Build -if($Configuration -eq "Release"){
         Remove-Item -Path ".\Output\$($ModuleName)" -Recurse -Force
     }
     try {
-        
         New-Item -Path ".\Output\$($ModuleName)\$($ModuleVersion)" -ItemType Directory
     }
     catch {
@@ -256,6 +271,8 @@ task Build -if($Configuration -eq "Release"){
                 $mylist = $Sel.ToString().Split([Environment]::NewLine)
                 foreach($s in $mylist){
                     if($s -match "Alias"){
+                        # This assumes aliases are defined like so
+                        # [Alias('Get-SomethingAlias')]
                         $alias = (($s.split(":")[2]).split("(")[1]).split(")")[0]
                         Write-Verbose -Message "Exporting Alias: $($alias) to Function: $($function)"
                         Add-Content -Path $ModuleFile -Value "Export-ModuleMember -Function $(($function.split('.')[0]).ToString()) -Alias $alias"
@@ -298,7 +315,7 @@ task Build -if($Configuration -eq "Release"){
         Update-ModuleManifest -Path ".\Output\$($ModuleName)\$($ModuleVersion)\$($ModuleName).psd1" -RootModule "$($ModuleName).psm1"
     }
     catch {
-        Write-Warning -Message "Failed appinding the rootmodule to the Module Manifest"
+        Write-Warning -Message "Failed appending the rootmodule to the Module Manifest"
     }
 
     Write-Verbose -Message "Compiling Help files"
@@ -348,8 +365,9 @@ task Publish -if($Configuration -eq "Release"){
     Import-Module ".\Output\$($ModuleName)\$ModuleVersion\$($ModuleName).psm1"
     If((Get-Module -Name $ModuleName) -and ($NugetAPIKey)) {
         try {
+            $Tags = @('PSEdition_Desktop','PSEdition_Core','Windows','Linux')
             write-Verbose -Message "Publishing Module: $($ModuleName)"
-            Publish-Module -Name $ModuleName -NuGetApiKey $NugetAPIKey
+            Publish-Module -Name $ModuleName -NuGetApiKey $NugetAPIKey -Tags $Tags
         }
         catch {
             throw "Failed publishing module to PowerShell Gallery"
@@ -360,4 +378,4 @@ task Publish -if($Configuration -eq "Release"){
     }
 }
 
-task . Init, Test, DebugBuild, Build, Clean, Publish
+task . Init, FixTrailingWhitespaces, Test, DebugBuild, Build, Clean
