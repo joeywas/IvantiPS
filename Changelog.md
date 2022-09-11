@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.4] - 2022-09-10
+### Added
+- Function: Get-IvantiBusinessObjectRelationship to return relationship(s) from a particular type of business object
+### Changed
+- Build script and psm1 file to facilitate easier local debugging and more reliable publishing
+### Fixed
+- Function Invoke-IvantiMethod didn't check for existence of getparameter, but now it does
+
 ## [0.0.3] - 2022-04-26
 ### Added
 - Function: Get-IvantiAgency to return agencies

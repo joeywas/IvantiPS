@@ -126,11 +126,13 @@ function Invoke-IvantiMethod {
                 $ODataCount = $RestResponse."@odata.count"
                 Write-DebugMessage "[$($MyInvocation.MyCommand.Name) $Level] ODataCount: $ODataCount"
 
-                if ($GetParameter['$top']) {
-                    $top = $GetParameter['$top']
-                }
-                if ($GetParameter['$skip']) {
-                    $skip = $GetParameter['$skip']
+                if ($GetParameter) {
+                    if ($GetParameter['$top']) {
+                        $top = $GetParameter['$top']
+                    }
+                    if ($GetParameter['$skip']) {
+                        $skip = $GetParameter['$skip']
+                    }
                 }
                 $TopPlusSkip = $top + $skip
 
