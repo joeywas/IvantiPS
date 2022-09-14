@@ -12,7 +12,7 @@
 RootModule = 'IvantiPS.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.1.2'
+ModuleVersion = '0.1.3'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -25,11 +25,6 @@ Author = 'joey.was@gmail.com'
 
 # Company or vendor of this module
 CompanyName = 'joey.was@gmail.com'
-
-
-    # Version number of this module.
-    ModuleVersion = '0.1.3'
-
 
 # Description of the functionality provided by this module
 Description = 'PowerShell module to interact with Ivanti Service Manager REST API'
@@ -70,12 +65,6 @@ PowerShellVersion = '3.0'
 # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
 # NestedModules = @()
 
-# Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = 'Get-IvantiPSConfig', 'Set-IvantiPSConfig', 'Connect-IvantiTenant', 
-               'Get-IvantiSession', 'Invoke-IvantiMethod', 
-               'Get-IvantiBusinessObjectMetadata', 'Get-IvantiBusinessObject', 
-               'Get-IvantiAgency', 'Get-IvantiCI', 'Get-IvantiEmployee'
-
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()
 
@@ -85,22 +74,20 @@ CmdletsToExport = @()
 # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
 AliasesToExport = 'Get-IvantiAsset'
 
-
-    # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-    FunctionsToExport = @(
-        'Get-IvantiPSConfig',
-        'Set-IvantiPSConfig',
-        'Connect-IvantiTenant',
-        'Get-IvantiAgency',
-        'Get-IvantiBusinessObject',
-        'Get-IvantiBusinessObjectMetadata',
-        'Get-IvantiBusinessObjectRelationship',
-        'Get-IvantiCI',
-        'Get-IvantiEmployee',
-        'Get-IvantiSession',
-        'Invoke-IvantiMethod'
-    )
-
+# Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
+FunctionsToExport = @(
+    'Get-IvantiPSConfig',
+    'Set-IvantiPSConfig',
+    'Connect-IvantiTenant',
+    'Get-IvantiAgency',
+    'Get-IvantiBusinessObject',
+    'Get-IvantiBusinessObjectMetadata',
+    'Get-IvantiBusinessObjectRelationship',
+    'Get-IvantiCI',
+    'Get-IvantiEmployee',
+    'Get-IvantiSession',
+    'Invoke-IvantiMethod'
+)
 
 # List of all modules packaged with this module
 # ModuleList = @()
@@ -113,9 +100,6 @@ PrivateData = @{
 
     PSData = @{
 
-        # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = 'powershell','ivanti','api','PSEdition_Desktop','PSEdition_Core','Windows','Linux'
-
         # A URL to the license for this module.
         LicenseUri = 'https://github.com/joeywas/IvantiPS/blob/main/LICENSE'
 
@@ -125,13 +109,11 @@ PrivateData = @{
         # A URL to an icon representing this module.
         # IconUri = ''
 
-            # Tags applied to this module. These help with module discovery in online galleries.
-            Tags = @(
-                'powershell',
-                'ivanti'
-                )
-
-
+        # Tags applied to this module. These help with module discovery in online galleries.
+        Tags = @(
+            'powershell',
+            'ivanti'
+            )
 
         # Prerelease string of this module
         # Prerelease = ''
