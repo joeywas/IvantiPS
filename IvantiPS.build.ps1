@@ -1,9 +1,10 @@
 ###############################################################################
 # IvantiPS.build.ps1
 ###############################################################################
-
-# Source 
-# https://github.com/ScriptingChris/New-ModuleProject/blob/main/Source/build.ps1
+<#
+ Build file source https://github.com/ScriptingChris/New-ModuleProject/blob/main/Source/build.ps1
+ Code Sign Cert https://www.meziantou.net/generate-a-self-signed-certificate-for-code-signing.htm 
+#>
 
 param (
     [ValidateSet("Release", "debug")]$Configuration = "debug",
@@ -63,8 +64,9 @@ task Test {
 
     $PathToPSM1 = ".\IvantiPS\IvantiPS.psm1"
     Import-Module $PathToPsm1 -Force
-
+    
     $Results = Invoke-Pester -Configuration $pesterConfig
+    #$Results = Invoke-Pester -Script ".\Tests*" -OutputFile ".\Tests\TestResults.xml" -OutputFormat NUnitXml
     if($Results.FailedCount -gt 0){
         throw "$($Results.FailedCount) Tests failed"
     }
@@ -208,12 +210,12 @@ task Build -if($Configuration -eq "Release"){
         $publicFunctions = Get-ChildItem -Path ".\IvantiPS\Public\*.ps1"
         $privateFunctions = Get-ChildItem -Path ".\IvantiPS\Private\*.ps1"
         #$totalFunctions = $publicFunctions.count + $privateFunctions.count
-        $totalFunctions = 0
         #$ModuleBuildNumber = $oldModuleVersion.Build + 1
         $ModuleBuildNumber = $oldModuleVersion.Build
+
         Write-Verbose -Message "Updating the Moduleversion"
         $Script:ModuleVersion = "$($oldModuleVersion.Major).$($totalFunctions).$($ModuleBuildNumber)"
-        Write-Verbose "New ModuleVersion: $ModuleVersion"
+        Write-Verbose "Mew ModuleVersion: $ModuleVersion"
         #Update-ModuleManifest -Path ".\IvantiPS\$($ModuleName).psd1" -ModuleVersion $ModuleVersion
     }
 
@@ -273,8 +275,9 @@ task Build -if($Configuration -eq "Release"){
                 foreach($s in $mylist){
                     if($s -match "Alias"){
                         # This assumes aliases are defined like so
-                        # [Alias('Get-SomethingAlias')]
-                        $alias = (($s.split(":")[2]).split("(")[1]).split(")")[0]
+
+                        # [Alias('Get-IvantiAsset')]
+                        $alias = (($s.split(":")[3]).split("('")[1]).split("')")[0]
                         Write-Verbose -Message "Exporting Alias: $($alias) to Function: $($function)"
                         Add-Content -Path $ModuleFile -Value "Export-ModuleMember -Function $(($function.split('.')[0]).ToString()) -Alias $alias"
                         $AliasSwitch = $true
@@ -323,7 +326,8 @@ task Build -if($Configuration -eq "Release"){
     Write-Verbose -Message "Importing the module to be able to output documentation"
     Try {
         Write-Verbose -Message "Importing the module to be able to output documentation"
-        Import-Module ".\Output\$($ModuleName)\$ModuleVersion\$($ModuleName).psm1"
+        Import-Module -Name ".\Output\$($ModuleName)\$ModuleVersion\$($ModuleName).psm1" -Global
+        Get-Module -Name $($ModuleName) -Verbose
     }
     catch {
         throw "Failed importing the module: $($ModuleName)"
@@ -341,9 +345,9 @@ task Build -if($Configuration -eq "Release"){
         Write-Verbose -Message "Docs folder is empty, generating new files"
         if(Get-Module -Name $($ModuleName)) {
             Write-Verbose -Message "Module: $($ModuleName) is imported into session, generating Help Files"
-            New-MarkdownHelp -Module $ModuleName -OutputFolder ".\Docs"
-            New-MarkdownAboutHelp -OutputFolder ".\Docs" -AboutName $ModuleName
-            New-ExternalHelp ".\Docs" -OutputPath ".\Output\$($ModuleName)\$($ModuleVersion)\en-US\"
+            #New-MarkdownHelp -Module $ModuleName -OutputFolder ".\Docs"
+            #New-MarkdownAboutHelp -OutputFolder ".\Docs" -AboutName $ModuleName
+            #New-ExternalHelp ".\Docs" -OutputPath ".\Output\$($ModuleName)\$($ModuleVersion)\en-US\"
         }
         else {
             throw "Module is not imported, cannot generate help files"
@@ -354,8 +358,11 @@ task Build -if($Configuration -eq "Release"){
         Remove-Item -Path ".\Docs\*.*" -Exclude "about_*"
         if(Get-Module -Name $($ModuleName)) {
             Write-Verbose -Message "Module: $($ModuleName) is imported into session, generating Help Files"
-            New-MarkdownHelp -Module $ModuleName -OutputFolder ".\Docs"
-            New-ExternalHelp ".\Docs" -OutputPath ".\Output\$($ModuleName)\$($ModuleVersion)\en-US\"
+            #New-MarkdownHelp -Module $ModuleName -OutputFolder ".\Docs"
+            # Only generate external help if the output path doesn't exist
+            if (!(Test-Path ".\Output\$($ModuleName)\$($ModuleVersion)\en-US\")) {
+                #New-ExternalHelp ".\Docs" -OutputPath ".\Output\$($ModuleName)\$($ModuleVersion)\en-US\"
+            }
         }
     }
 }
@@ -375,7 +382,8 @@ task Publish -if($Configuration -eq "Release"){
     If((Get-Module -Name $ModuleName) -and ($NugetAPIKey)) {
         try {
             $Tags = @('PSEdition_Desktop','PSEdition_Core','Windows','Linux')
-            write-Verbose -Message "Publishing Module: $($ModuleName)"
+            write-Verbose -Message "Publishing Module: $($ModuleName) with tags $($Tags | Out-String)"
+
             Publish-Module -Name $ModuleName -NuGetApiKey $NugetAPIKey -Tags $Tags
         }
         catch {
