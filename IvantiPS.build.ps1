@@ -208,11 +208,12 @@ task Build -if($Configuration -eq "Release"){
         $publicFunctions = Get-ChildItem -Path ".\IvantiPS\Public\*.ps1"
         $privateFunctions = Get-ChildItem -Path ".\IvantiPS\Private\*.ps1"
         #$totalFunctions = $publicFunctions.count + $privateFunctions.count
+        $totalFunctions = 0
         #$ModuleBuildNumber = $oldModuleVersion.Build + 1
         $ModuleBuildNumber = $oldModuleVersion.Build
         Write-Verbose -Message "Updating the Moduleversion"
         $Script:ModuleVersion = "$($oldModuleVersion.Major).$($totalFunctions).$($ModuleBuildNumber)"
-        Write-Verbose "Mew ModuleVersion: $ModuleVersion"
+        Write-Verbose "New ModuleVersion: $ModuleVersion"
         #Update-ModuleManifest -Path ".\IvantiPS\$($ModuleName).psd1" -ModuleVersion $ModuleVersion
     }
 
@@ -328,6 +329,14 @@ task Build -if($Configuration -eq "Release"){
         throw "Failed importing the module: $($ModuleName)"
     }
 
+    Write-Verbose -Message "Does .\Docs exist?"
+    if (!(Test-Path -Path ".\Docs")) {
+        Write-Verbose -Message ".\Docs doesn't exist, creating it"
+        New-Item -Path ".\Docs" -ItemType Directory
+    } else {
+        Write-Verbose -Message ".\Docs exists"
+    }
+    
     if(!(Get-ChildItem -Path ".\Docs")){
         Write-Verbose -Message "Docs folder is empty, generating new files"
         if(Get-Module -Name $($ModuleName)) {
