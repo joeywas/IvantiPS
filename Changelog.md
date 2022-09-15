@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.4] - 2022-09-14
+### Changed
+- Incremented version number only to test publishing
+
 ## [0.1.3] - 2022-09-10
 ### Added
 - Function: Get-IvantiBusinessObjectRelationship to return relationship(s) from a particular type of business object
