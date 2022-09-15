@@ -12,7 +12,7 @@
 RootModule = 'IvantiPS.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.1.4'
+ModuleVersion = '0.1.5'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -80,6 +80,7 @@ FunctionsToExport = @(
     'Set-IvantiPSConfig',
     'Connect-IvantiTenant',
     'Get-IvantiAgency',
+    'Get-IvantiAgencyIncident',
     'Get-IvantiBusinessObject',
     'Get-IvantiBusinessObjectMetadata',
     'Get-IvantiBusinessObjectRelationship',

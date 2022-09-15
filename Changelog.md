@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.5] - 2022-09-15
+### Added
+- Function: Get-IvantiAgencyIncident to get all incidents for an agency
+### Fixed
+- Function: Get-IvantiAgency treats -name parm correctly now
+
 ## [0.1.4] - 2022-09-14
 ### Changed
 - Incremented version number only to test publishing
