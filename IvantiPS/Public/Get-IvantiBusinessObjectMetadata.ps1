@@ -12,6 +12,11 @@ function Get-IvantiBusinessObjectMetadata {
 .PARAMETER MetaDatatype
     The type of meta data to return. May be Fields, Relationships, Actions, or SavedSearch
 
+.EXAMPLE
+    Get-IvantiBusinessObjectMetadata -BusinessObject incident -MetaDataType Actions
+
+    Get the quick actions related to incident business object type
+    
 .NOTES
     https://help.ivanti.com/ht/help/en_US/ISM/2020/admin/Content/Configure/API/Metadata.htm
     https://help.ivanti.com/ht/help/en_US/ISM/2020/admin/Content/Configure/API/Saved-Search-API.htm

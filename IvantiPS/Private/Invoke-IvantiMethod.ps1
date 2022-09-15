@@ -32,6 +32,7 @@ function Invoke-IvantiMethod {
         [Microsoft.PowerShell.Commands.WebRequestMethod]$Method = "GET",
         [Hashtable]$Headers,
         [Hashtable]$GetParameter = @{},
+        [System.Object]$Body,
         [int]$Level = 1
     )
 
@@ -85,6 +86,12 @@ function Invoke-IvantiMethod {
             Headers         = $_headers
             ErrorAction     = "Stop"
             Verbose         = $false
+        }
+        if ($body) {
+            Write-Debug "[$($MyInvocation.MyCommand.Name) $LevelOfRecursion] Added body to splatparm: $($body | Out-String)"
+            $splatParameters += @{
+                Body = $body
+            }
         }
 #endregion Constructe IRM Parameter
 

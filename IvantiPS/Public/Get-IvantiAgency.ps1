@@ -13,26 +13,32 @@ function Get-IvantiAgency {
         Full agency name to filter on
 
     .PARAMETER AgencyShortName
-        Agency short name to filter on. Usually an abbreviation
+        Agency short name to filter on. Usually an abbreviation.
 
     .EXAMPLE
-        Get-IvantiAgency -AgencyShortName ACM
+        Get-IvantiAgency ACM
+
+        Returns all agencies with shortname value of ACM
 
     .EXAMPLE
-        Get-IvantiAgency -Agency 'Advanced Computer Machines'
+        Get-IvantiAgency
+
+        Returns all agencies
 
     .EXAMPLE
         Get-IvantiAgency -RecID DC218F83EC504222B148EF1344E15BCB
 
     .NOTES
         https://help.ivanti.com/ht/help/en_US/ISM/2020/admin/Content/Configure/API/Get-Business-Object-by-Filter.htm
+        https://help.ivanti.com/ht/help/en_US/ISM/2020/admin/Content/Configure/API/Get-Business-Object-by-Search.htm
 
     #>
     [CmdletBinding()]
     param(
+        [Parameter(Position=0)]
+        [string]$ShortName,
         [string]$RecID,
-        [string]$Agency,
-        [string]$AgencyShortName
+        [string]$Name
     )
 
     begin {
@@ -46,12 +52,12 @@ function Get-IvantiAgency {
         if ($RecID) {
             Write-DebugMessage "[$($MyInvocation.MyCommand.Name)] RecID [$RecID] passed in, setting filter"
             $GetParameter = @{'$filter' = "RecID eq '$($RecID)'"}
-        } elseif ($Agency) {
-            Write-DebugMessage "[$($MyInvocation.MyCommand.Name)] Agency [$Agency] passed in, setting filter"
-            $GetParameter = @{'$filter' = "Agency eq '$($Agency)'"}
-        } elseif ($AgencyShortName) {
-            Write-DebugMessage "[$($MyInvocation.MyCommand.Name)] AgencyShortName [$AgencyShortName] passed in, setting filter"
-            $GetParameter = @{'$filter' = "AgencyShortName eq '$($AgencyShortName)'"}
+        } elseif ($Name) {
+            Write-DebugMessage "[$($MyInvocation.MyCommand.Name)] Name [$Name] passed in, setting filter"
+            $GetParameter = @{'$filter' = "Agency eq '$($Name)'"}
+        } elseif ($ShortName) {
+            Write-DebugMessage "[$($MyInvocation.MyCommand.Name)] ShortName [$ShortName] passed in, setting filter"
+            $GetParameter = @{'$filter' = "AgencyShortName eq '$($ShortName)'"}
         } else {
             Write-DebugMessage "[$($MyInvocation.MyCommand.Name)] No parameters passed in"
         }
