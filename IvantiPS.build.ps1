@@ -46,6 +46,8 @@ task Test {
         Invoke-ScriptAnalyzer ".\IvantiPS\Private" -Recurse
     }
     catch {
+        Write-Warning "Couldn't run Script Analyzer"
+        $_
         throw "Couldn't run Script Analyzer"
     }
 
@@ -59,6 +61,10 @@ task Test {
             OutputFormat = 'NUnitXML'
         }
     }
+
+    $PathToPSM1 = ".\IvantiPS\IvantiPS.psm1"
+    Import-Module $PathToPsm1 -Force
+    
     $Results = Invoke-Pester -Configuration $pesterConfig
     #$Results = Invoke-Pester -Script ".\Tests*" -OutputFile ".\Tests\TestResults.xml" -OutputFormat NUnitXml
     if($Results.FailedCount -gt 0){
@@ -201,14 +207,17 @@ task Build -if($Configuration -eq "Release"){
         Write-Verbose -Message "No new ModuleVersion was provided, locating existing version from psd file."
         $oldModuleVersion = (Test-ModuleManifest -Path ".\IvantiPS\$($ModuleName).psd1").Version
 
-        $publicFunctions = Get-ChildItem -Path ".\IvantiPS\Public\*.ps1"
-        $privateFunctions = Get-ChildItem -Path ".\IvantiPS\Private\*.ps1"
+        #$publicFunctions = Get-ChildItem -Path ".\IvantiPS\Public\*.ps1"
+        #$privateFunctions = Get-ChildItem -Path ".\IvantiPS\Private\*.ps1"
         #$totalFunctions = $publicFunctions.count + $privateFunctions.count
-        $ModuleBuildNumber = $oldModuleVersion.Build + 1
+        #$ModuleBuildNumber = $oldModuleVersion.Build + 1
+        #$ModuleBuildNumber = $oldModuleVersion.Build
+
         Write-Verbose -Message "Updating the Moduleversion"
-        $Script:ModuleVersion = "$($oldModuleVersion.Major).$($oldModuleVersion.Minor).$($ModuleBuildNumber)"
-        Write-Verbose "Mew ModuleVersion: $ModuleVersion"
-        Update-ModuleManifest -Path ".\IvantiPS\$($ModuleName).psd1" -ModuleVersion $ModuleVersion
+        #$Script:ModuleVersion = "$($oldModuleVersion.Major).$($oldModuleVersion.Minor).$($ModuleBuildNumber)"
+        $Script:ModuleVersion = $oldModuleVersion
+        Write-Verbose "New ModuleVersion: $ModuleVersion"
+        #Update-ModuleManifest -Path ".\IvantiPS\$($ModuleName).psd1" -ModuleVersion $ModuleVersion
     }
 
     if(Test-Path ".\Output\$($ModuleName)\$($ModuleVersion)"){
@@ -222,7 +231,6 @@ task Build -if($Configuration -eq "Release"){
         Remove-Item -Path ".\Output\$($ModuleName)" -Recurse -Force
     }
     try {
-        
         New-Item -Path ".\Output\$($ModuleName)\$($ModuleVersion)" -ItemType Directory
     }
     catch {
@@ -268,6 +276,7 @@ task Build -if($Configuration -eq "Release"){
                 foreach($s in $mylist){
                     if($s -match "Alias"){
                         # This assumes aliases are defined like so
+
                         # [Alias('Get-IvantiAsset')]
                         $alias = (($s.split(":")[3]).split("('")[1]).split("')")[0]
                         Write-Verbose -Message "Exporting Alias: $($alias) to Function: $($function)"
@@ -325,6 +334,14 @@ task Build -if($Configuration -eq "Release"){
         throw "Failed importing the module: $($ModuleName)"
     }
 
+    Write-Verbose -Message "Does .\Docs exist?"
+    if (!(Test-Path -Path ".\Docs")) {
+        Write-Verbose -Message ".\Docs doesn't exist, creating it"
+        New-Item -Path ".\Docs" -ItemType Directory
+    } else {
+        Write-Verbose -Message ".\Docs exists"
+    }
+    
     if(!(Get-ChildItem -Path ".\Docs")){
         Write-Verbose -Message "Docs folder is empty, generating new files"
         if(Get-Module -Name $($ModuleName)) {
@@ -367,6 +384,7 @@ task Publish -if($Configuration -eq "Release"){
         try {
             $Tags = @('PSEdition_Desktop','PSEdition_Core','Windows','Linux')
             write-Verbose -Message "Publishing Module: $($ModuleName) with tags $($Tags | Out-String)"
+
             Publish-Module -Name $ModuleName -NuGetApiKey $NugetAPIKey -Tags $Tags
         }
         catch {

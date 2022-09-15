@@ -126,11 +126,13 @@ function Invoke-IvantiMethod {
                 $ODataCount = $RestResponse."@odata.count"
                 Write-DebugMessage "[$($MyInvocation.MyCommand.Name) $Level] ODataCount: $ODataCount"
 
-                if ($GetParameter['$top']) {
-                    $top = $GetParameter['$top']
-                }
-                if ($GetParameter['$skip']) {
-                    $skip = $GetParameter['$skip']
+                if ($GetParameter) {
+                    if ($GetParameter['$top']) {
+                        $top = $GetParameter['$top']
+                    }
+                    if ($GetParameter['$skip']) {
+                        $skip = $GetParameter['$skip']
+                    }
                 }
                 $TopPlusSkip = $top + $skip
 
@@ -168,7 +170,7 @@ function Invoke-IvantiMethod {
 
                         if ($Total -ge $ODataCount) {
                             Write-DebugMessage "[$($MyInvocation.MyCommand.Name) $Level] Stopping paging, as [`$Total: $Total] reached [`$ODataAcount: $ODataCount]"
-                            break
+                            return
                         } else {
                             Write-DebugMessage "[$($MyInvocation.MyCommand.Name) $Level] Continuing paging, as [`$Total: $Total] has not reached [`$ODataAcount: $ODataCount]"
                         }
@@ -188,7 +190,7 @@ function Invoke-IvantiMethod {
                         # increment the recursion level for debugging
                         $PSBoundParameters["Level"] = $Level + 1
 
-                        # Inquire the next page
+                        # Get the next page aka recurse
                         $result = Invoke-IvantiMethod @PSBoundParameters
                     } while ($result.Count -gt 0)
     #endregion paging

@@ -28,7 +28,9 @@ function Connect-IvantiTenant {
         [System.Management.Automation.Credential()]
         $Credential,
         [Parameter(ParameterSetName="Session")]
-        [string]$SessionID
+        [string]$SessionID,
+        [Parameter(ParameterSetName="APIKey")]
+        [string]$APIKey
     )
 
     begin {
@@ -65,9 +67,14 @@ function Connect-IvantiTenant {
                 Write-Warning "[$($MyInvocation.MyCommand.Name)] Problem calling $LoginURL"
                 $_
             }
+        } elseif ($APIKey) {
+            Write-DebugMessage "[$($MyInvocation.MyCommand.Name)] Existing APIKey passed in, using it"
+            # If existing session id was passed in, use it
+            #
+            $result = $APIKey
         } else {
-            Write-Warning "[$($MyInvocation.MyCommand.Name)] No Credentials or SessionID passed in. Exiting..."
-            break
+            Write-Warning "[$($MyInvocation.MyCommand.Name)] No Credentials, SessionID, or APIKey passed in. Exiting..."
+            return
         }
 
         # The resulting session value from a valid call to the login url will be
