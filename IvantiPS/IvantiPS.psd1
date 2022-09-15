@@ -86,6 +86,7 @@ FunctionsToExport = @(
     'Get-IvantiBusinessObjectRelationship',
     'Get-IvantiCI',
     'Get-IvantiEmployee',
+    'Get-IvantiIncident',
     'Get-IvantiSession',
     'Invoke-IvantiMethod'
 )

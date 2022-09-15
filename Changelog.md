@@ -8,7 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.5] - 2022-09-15
 ### Added
-- Function: Get-IvantiAgencyIncident to get all incidents for an agency
+- Function: Get-IvantiAgencyIncident to get incidents related to an agency
+- Function: Get-IvantiIncident to get incidents
 ### Fixed
 - Function: Get-IvantiAgency treats -name parm correctly now
 
