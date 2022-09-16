@@ -9,16 +9,19 @@ function Get-IvantiIncident {
     .PARAMETER RecID
         Ivanti Record ID for a specific incident
 
+    .PARAMETER AgencyName
+        Filter to get incidents from a specific agency name
+
     .PARAMETER Status
         Status of the incidents to filter for. Defaults to Active. Valid values: closed, resolved, cancelled, all
 
-    .PARAMETER GetAllFields
+    .PARAMETER AllFields
         If set, will return *all* available fields. Defaults to false. You've been warned!
 
     .EXAMPLE
-        Get-IvantiIncident
+        Get-IvantiIncident -AgencyName ABC
 
-        Returns all Active incidents
+        Returns all Active incidents for Agency with name ABC
 
     .EXAMPLE
         Get-IvantiIncident -Status All
@@ -36,9 +39,10 @@ function Get-IvantiIncident {
     [CmdletBinding()]
     param(
         [string]$RecID,
+        [string]$AgencyName,
         [ValidateSet('Closed','Active','Resolved','Cancelled','All')]
         [string]$Status = 'Active',
-        [switch]$GetAllFields = $false
+        [switch]$AllFields = $false
 
     )
 
@@ -53,14 +57,13 @@ function Get-IvantiIncident {
         $fields += "ImpactedAgenciesShort, LastModDateTime, LastModBy, LastCustomerUpdate, "
         $fields += "ResolvedDateTime, ResolvedBy, Resolution, ResolutionCategory"
 
-        if ($GetAllFields) {
+        if ($AllFields) {
             $GetParameter = @{}
         } else {
             $GetParameter = @{
                 '$select' = $fields
             }
         }
-
 
         # If one or more parameters are passed in, use only one of them
         # Order of preference is RecID, Agency, then AgencyShortName
@@ -77,15 +80,33 @@ function Get-IvantiIncident {
                 $GetParameter += @{'$filter' = "Status eq '$($Status)'"}
             }
         } else {
-            Write-DebugMessage "[$($MyInvocation.MyCommand.Name)] No parameters passed in"
+            Write-DebugMessage "[$($MyInvocation.MyCommand.Name)] No RecID or Status parameters passed in"
         }
 
-        # Build the URL. It will look something like the below for incident business objects
-        # Note the 's' at the end
-        # https://tenant.ivanticloud.com/api/odata/businessobject/incidents
-        #
         $IvantiTenantID = (Get-IvantiPSConfig).IvantiTenantID
-        $uri = "https://$IvantiTenantID/api/odata/businessobject/incidents"
+
+        if ($AgencyName) {
+            # https://help.ivanti.com/ht/help/en_US/ISM/2020/admin/Content/Configure/API/Get-Related-Business-Objects-API.htm        
+            $AgencyRecID = (Get-IvantiAgency -ShortName $AgencyName).RecID
+
+            # relationship types that may be of interest
+            # IncidentAssocAgency
+            # ServiceReqAssocAgency
+            # ChangeAssocAgency
+            #
+            #$RelationshipType = 'IncidentAssocAgency'
+
+            # Build the URL. It will look something like below for agency business object relationships
+            # https://{tenant url}/api/odata/businessobject/{business object name}('{business object unique key}')/{relationship name}
+            #
+            $uri = "https://{0}/api/odata/businessobject/agencys('{1}')/IncidentAssocAgency" -f $IvantiTenantID,$AgencyRecID
+        } else {
+            # Build the URL. It will look something like the below for incident business objects
+            # Note the 's' at the end
+            # https://tenant.ivanticloud.com/api/odata/businessobject/incidents
+            #
+            $uri = "https://$IvantiTenantID/api/odata/businessobject/incidents"
+        }
 
     } # end begin
 
