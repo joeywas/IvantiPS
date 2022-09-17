@@ -15,8 +15,9 @@ function Get-IvantiServiceRequest {
     .PARAMETER Status
         Status of the service requests to filter for. Set to All if wanting all Status values. Defaults to Active. 
 
-        Status
+        Valid values for Status
         ------
+        All
         Closed
         Cancelled
         Fulfilled
@@ -48,7 +49,6 @@ function Get-IvantiServiceRequest {
         [ValidateSet('Closed','Active','Fulfilled','Cancelled','Waiting For Customer','All')]
         [string]$Status = 'Active',
         [switch]$AllFields = $false
-
     )
 
     begin {
@@ -62,6 +62,9 @@ function Get-IvantiServiceRequest {
         $fields += "ImpactedAgenciesShort, Owner, OwnerTeam, OwnerTeamEmail, LastModDateTime, LastModBy, "
         $fields += "ResolvedDateTime, ResolvedBy, Resolution, BillingAgency, BillingAgencyNumber, ROParams"
 
+        # If all fields is set, we don't both adding the fields to select
+        # this will return *everything* available
+        #
         if ($AllFields) {
             $GetParameter = @{}
         } else {
@@ -94,11 +97,6 @@ function Get-IvantiServiceRequest {
             # https://help.ivanti.com/ht/help/en_US/ISM/2020/admin/Content/Configure/API/Get-Related-Business-Objects-API.htm        
             $AgencyRecID = (Get-IvantiAgency -ShortName $AgencyName).RecID
 
-            # relationship types that may be of interest
-            # IncidentAssocAgency
-            # ServiceReqAssocAgency
-            # ChangeAssocAgency
-
             # Build the URL. It will look something like below for agency business object relationships
             # https://{tenant url}/api/odata/businessobject/{business object name}('{business object unique key}')/{relationship name}
             #
@@ -108,7 +106,7 @@ function Get-IvantiServiceRequest {
             # Note the 's' at the end
             # https://tenant.ivanticloud.com/api/odata/businessobject/servicereqs
             #
-            $uri = "https://$IvantiTenantID/api/odata/businessobject/servicereqs"
+            $uri = "https://{0}/api/odata/businessobject/servicereqs" -f $IvantiTenantID
         }
 
     } # end begin
