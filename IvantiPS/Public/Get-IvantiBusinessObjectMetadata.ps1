@@ -16,7 +16,7 @@ function Get-IvantiBusinessObjectMetadata {
     Get-IvantiBusinessObjectMetadata -BusinessObject incident -MetaDataType Actions
 
     Get the quick actions related to incident business object type
-    
+
 .NOTES
     https://help.ivanti.com/ht/help/en_US/ISM/2020/admin/Content/Configure/API/Metadata.htm
     https://help.ivanti.com/ht/help/en_US/ISM/2020/admin/Content/Configure/API/Saved-Search-API.htm

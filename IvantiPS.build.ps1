@@ -72,6 +72,46 @@ task Test {
     }
 }
 
+# Synopsis: Validate the release build was sane and exported the correct number of functions
+#
+Task ValidateBuild -if($Configuration -eq "Release") {
+    # How many functions should there be?
+    $ExpectedFunctionCount = 12
+
+    $ModuleName = (Test-ModuleManifest -Path ".\IvantiPS\*.psd1").Name
+    Write-Verbose -Message "Module name [$ModuleName]"
+    Write-Verbose -Message "Get module version from psd file [.\IvantiPS\$($ModuleName).psd1]"
+    $ModuleVersion = (Test-ModuleManifest -Path ".\IvantiPS\$($ModuleName).psd1").Version
+    $ModuleVersion = "$($ModuleVersion.Major).$($ModuleVersion.Minor).$($ModuleVersion.Build)"
+    Write-Verbose "ModuleVersion found from psd file [$ModuleVersion]"
+
+    Write-Verbose -Message "Importing the module to be able to validate build - TestTheBuild should be called after Build"
+    Try {
+        Import-Module -Name ".\Output\$($ModuleName)\$ModuleVersion\$($ModuleName).psm1" -Global
+        Get-Module -Name $($ModuleName) -Verbose
+    }
+    catch {
+        throw "Failed importing module from [.\Output\$($ModuleName)\$ModuleVersion\$($ModuleName).psm1]"
+    }
+
+    Write-Verbose -Message "Using Test-ModuleManifest with [.\Output\$($ModuleName)\$ModuleVersion\$($ModuleName).psd1]"
+    Try {
+        $TestManifest = Test-ModuleManifest -Path ".\Output\$($ModuleName)\$ModuleVersion\$($ModuleName).psd1"
+    }
+    catch {
+        throw "Failed test manifest from [.\Output\$($ModuleName)\$ModuleVersion\$($ModuleName).psd1]"
+    }
+
+    $ActualFunctionCount = ($TestManifest.ExportedCommands.Values | Where-Object {$_.CommandType -eq 'Function'}).Count
+    Write-Verbose -Message "Expected function count is [$ExpectedFunctionCount]"
+    Write-Verbose -Message "Actual function count is [$ActualFunctionCount]"
+    if ($ActualFunctionCount -lt $ExpectedFunctionCount) {
+        throw "Actual count is less than Expected count"
+    } else {
+        Write-Verbose -Message "Function count validation passed!"
+    }
+}
+
 # Synopsis: Fix all trailing whitespaces in all functions. Because we're lazy
 #
 Task FixTrailingWhitespaces {
@@ -207,8 +247,8 @@ task Build -if($Configuration -eq "Release"){
         Write-Verbose -Message "No new ModuleVersion was provided, locating existing version from psd file."
         $oldModuleVersion = (Test-ModuleManifest -Path ".\IvantiPS\$($ModuleName).psd1").Version
 
-        #$publicFunctions = Get-ChildItem -Path ".\IvantiPS\Public\*.ps1"
-        #$privateFunctions = Get-ChildItem -Path ".\IvantiPS\Private\*.ps1"
+        $publicFunctions = Get-ChildItem -Path ".\IvantiPS\Public\*.ps1"
+        $privateFunctions = Get-ChildItem -Path ".\IvantiPS\Private\*.ps1"
         #$totalFunctions = $publicFunctions.count + $privateFunctions.count
         #$ModuleBuildNumber = $oldModuleVersion.Build + 1
         #$ModuleBuildNumber = $oldModuleVersion.Build
@@ -396,4 +436,4 @@ task Publish -if($Configuration -eq "Release"){
     }
 }
 
-task . Init, FixTrailingWhitespaces, Test, DebugBuild, Build, Clean
+task . Init, FixTrailingWhitespaces, Test, DebugBuild, Build, Clean, ValidateBuild
