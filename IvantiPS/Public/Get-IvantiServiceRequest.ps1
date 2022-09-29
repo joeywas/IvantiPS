@@ -13,7 +13,7 @@ function Get-IvantiServiceRequest {
         Filter to get service requests from a specific agency name
 
     .PARAMETER Status
-        Status of the service requests to filter for. Set to All if wanting all Status values. Defaults to Active. 
+        Status of the service requests to filter for. Set to All if wanting all Status values. Defaults to Active.
 
         Valid values for Status
         ------
@@ -36,7 +36,7 @@ function Get-IvantiServiceRequest {
         Get-IvantiServiceRequest -Status All
 
         Returns all ServiceRequests
-        
+
     .NOTES
         https://help.ivanti.com/ht/help/en_US/ISM/2020/admin/Content/Configure/API/Get-Business-Object-by-Filter.htm
         https://help.ivanti.com/ht/help/en_US/ISM/2020/admin/Content/Configure/API/Get-Business-Object-by-Search.htm
@@ -95,7 +95,7 @@ function Get-IvantiServiceRequest {
         $IvantiTenantID = (Get-IvantiPSConfig).IvantiTenantID
 
         if ($AgencyName) {
-            # https://help.ivanti.com/ht/help/en_US/ISM/2020/admin/Content/Configure/API/Get-Related-Business-Objects-API.htm        
+            # https://help.ivanti.com/ht/help/en_US/ISM/2020/admin/Content/Configure/API/Get-Related-Business-Objects-API.htm
             $AgencyRecID = (Get-IvantiAgency -ShortName $AgencyName).RecID
 
             # Build the URL. It will look something like below for agency business object relationships

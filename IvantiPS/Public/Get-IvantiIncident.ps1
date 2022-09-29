@@ -27,7 +27,7 @@ function Get-IvantiIncident {
         Get-IvantiIncident -Status All
 
         Returns all Active incidents
-        
+
     .EXAMPLE
         Get-IvantiAgency -RecID DC218F83EC504222B148EF1344E15BCB
 
@@ -86,7 +86,7 @@ function Get-IvantiIncident {
         $IvantiTenantID = (Get-IvantiPSConfig).IvantiTenantID
 
         if ($AgencyName) {
-            # https://help.ivanti.com/ht/help/en_US/ISM/2020/admin/Content/Configure/API/Get-Related-Business-Objects-API.htm        
+            # https://help.ivanti.com/ht/help/en_US/ISM/2020/admin/Content/Configure/API/Get-Related-Business-Objects-API.htm
             $AgencyRecID = (Get-IvantiAgency -ShortName $AgencyName).RecID
 
             # relationship types that may be of interest
