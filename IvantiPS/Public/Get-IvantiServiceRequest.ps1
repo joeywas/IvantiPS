@@ -89,6 +89,7 @@ function Get-IvantiServiceRequest {
             }
         } else {
             Write-DebugMessage "[$($MyInvocation.MyCommand.Name)] No RecID or Status parameters passed in"
+            $GetParameter += @{'$filter' = "Status eq 'Active'"}
         }
 
         $IvantiTenantID = (Get-IvantiPSConfig).IvantiTenantID
@@ -102,7 +103,7 @@ function Get-IvantiServiceRequest {
             #
             $uri = "https://{0}/api/odata/businessobject/agencys('{1}')/ServiceReqAssocAgency" -f $IvantiTenantID,$AgencyRecID
         } else {
-            # Build the URL. It will look something like the below for incident business objects
+            # Build the URL. It will look something like the below for service request business objects
             # Note the 's' at the end
             # https://tenant.ivanticloud.com/api/odata/businessobject/servicereqs
             #
