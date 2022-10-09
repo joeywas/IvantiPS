@@ -2,6 +2,8 @@ name: Build Module
 on:
     pull_request: # Only trigger the workflow if there is a pull request to the main branch
         branches: [ main ]
+    paths-ignore:
+      - '**.md'
 
     workflow_dispatch: # Enables the possibility to trigger the workflow manually
 
