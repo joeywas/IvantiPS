@@ -43,7 +43,7 @@ Connect-IvantiTenant -Credential $Credential
 ### Connecting with SessionID
 If already authenticated to an Invanti tenant, the existing SessionID may be used. Open browser developer tools, find the cookie in Request headers, and the SessionID is the SID attribute in the cookie: `SID=tenantname.ivanticloud.com#GUPLABCNQ04GU8U248KQJ16TOVR4LASR#3;`
 
-```
+```powershell
 $sessionID = 'tenantname.ivanticloud.com#GUPLABCNQ04GU8U248KQJ16TOVR4LASR#3'
 Connect-IvantiTenant -SessionID $sessionID
 ```
