@@ -10,7 +10,12 @@ function Connect-IvantiTenant {
         Credential object to use to authenticate with the ISM tenant
 
     .PARAMETER SessionID
-        Existing session value to use instead of credentials
+        Existing session value to use instead of credentials. 
+        You may find the SessionID in the SID attribute on a response cookie from
+        an already authenticated session with an ivanti tenant
+
+    .PARAMETER APIKey
+        API Key from an Invanti tenant
 
     .EXAMPLE
         Connect-IvantiTenant -Credential (Get-Credential)
