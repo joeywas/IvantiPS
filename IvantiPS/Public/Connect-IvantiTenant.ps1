@@ -23,6 +23,8 @@ function Connect-IvantiTenant {
     .NOTES
         https://help.ivanti.com/ht/help/en_US/ISM/2020/admin/Content/Configure/API/Session-ID-Log-In.htm
 
+        https://help.ivanti.com/ht/help/en_US/ISM/2020/admin/Content/Configure/API/Using-REST-API-Key.htm
+
     #>
 
     [CmdletBinding()]
@@ -74,9 +76,12 @@ function Connect-IvantiTenant {
             }
         } elseif ($APIKey) {
             Write-DebugMessage "[$($MyInvocation.MyCommand.Name)] Existing APIKey passed in, using it"
-            # If existing session id was passed in, use it
+            # APIKey was passed in use it
+            # 
+            # This may or may not require curly braces. I don't have an API Key to test
+            # against a tenant. Hopefully someone else use this and let me know!
             #
-            $result = $APIKey
+            $result = "rest_api_key={$APIKey}"
         } else {
             Write-Warning "[$($MyInvocation.MyCommand.Name)] No Credentials, SessionID, or APIKey passed in. Exiting..."
             return
