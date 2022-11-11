@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.9] - 2022-11-10
+### Modified
+- Connect-IvantiTenant add APIKey parameter and context help
+
 ## [0.1.8] - 2022-09-28
 ### Fixed
 - Fixed build script so functions are actually exported
